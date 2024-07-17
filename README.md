@@ -31,6 +31,8 @@ The `gone` module provides three decorators to manipulate function input and out
 ```python
 import gone
 
+## as a decorator:
+
 @gone.args
 def greet():
     return "Hello World"
@@ -50,6 +52,24 @@ def display_message():
     return "ignored"
 
 display_message("ignored input")  # Output: This will print, but inputs and outputs are ignored; Returns: None
+
+
+## or as a function:
+
+import os, signal
+
+def main():
+    def sig_handler():
+        print("Runs without the default 'signal, frame' arguments!")
+        return "ignored"
+
+    # listen to signal:
+    signal.signal(signal.SIGFPE, gone.inout(sig_handler))
+    # just `sigint_handler` would crash because it's getting unexpected args
+
+    # send signal:
+    os.kill(os.getpid(), signal.SIGFPE)
+
 ```
 
 ## License
