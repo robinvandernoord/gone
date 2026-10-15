@@ -1,10 +1,9 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.12.4,<0.13"]
+build-backend = "uv_build"
 
 [project]
 name = "gone"
-dynamic = ["version"]
 description = ''
 readme = "README.md"
 requires-python = ">=3.10"
@@ -23,11 +22,10 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = []
+version = "0.1.0"
 
 [project.optional-dependencies]
 dev = [
-    "hatch",
-    # "python-semantic-release >= 8.0.0a5",
     "black",
     "su6[all]",
 ]
@@ -38,16 +36,51 @@ Documentation = "https://github.com/Robin van der Noord/gone#readme"
 Issues = "https://github.com/Robin van der Noord/gone/issues"
 Source = "https://github.com/Robin van der Noord/gone"
 
-[tool.hatch.version]
-path = "src/gone/__about__.py"
+[tool.vommit]
+allow_breaking_bang = true
+allow_breaking_footer = true
+prerelease_token = "beta"
+confirm = true
+ignore = []
 
-[tool.semantic_release]
+[tool.vommit.git]
+enabled = true
+origin = "origin"
 branch = "master"
-version_variable = "src/gone/__about__.py:__version__"
-change_log = "CHANGELOG.md"
-upload_to_repository = false
-upload_to_release = false
-build_command = "hatch build"
+on_wrong_branch = "error"
+tag_format = "v{version}"
+commit_format = "{version}"
+
+[tool.vommit.changelog]
+enabled = true
+file = "CHANGELOG.md"
+include_prereleases = false
+placeholder = "<!--next-version-placeholder-->"
+placeholder_regex = "<auto>"
+entry_title_format = "## v{version} ({date:%Y-%m-%d})"
+
+[tool.vommit.changelog.levels]
+feat = "Feature{s}"
+fix = "Fix{es}"
+break = "Breaking Change{s}"
+docs = "Documentation"
+perf = "Performance"
+
+[tool.vommit.pypi]
+enabled = false
+use_keyring = true
+
+[tool.vommit.commands]
+clean = "rm -rf ./dist"
+build = "uv build"
+publish = "uv publish"
+post_publish = ""
+
+[tool.vommit.version_bump_map]
+break = "major"
+feat = "minor"
+fix = "patch"
+perf = "patch"
 
 [tool.coverage.run]
 source_pkgs = ["gone", "tests"]
